@@ -57,5 +57,3 @@ Para conectar a aplicação ao banco de dados (itens 1 e 2), consulte:
 [`docs/handover-conexao-itens-1-e-2.md`](docs/handover-conexao-itens-1-e-2.md)
 
 ---
-
-Prof. José de J. Pérez-Alcázar — I semestre de 2026
