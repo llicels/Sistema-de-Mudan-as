@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Histograma — Serviços por Cidade — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Histograma: Serviços Solicitados por Cidade</h1>
+  <div class="page-actions">
+    <a href="{{ url_for('relatorios') }}" class="btn btn-secondary">Voltar</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="chart-container">
+    <canvas id="chartServicos"></canvas>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const ctx = document.getElementById('chartServicos').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: {{ dados.labels | tojson }},
+    datasets: [{
+      label: 'Quantidade de Serviços',
+      data: {{ dados.valores | tojson }},
+      backgroundColor: '#D4A843',
+      borderColor: '#2C2C2C',
+      borderWidth: 1,
+      borderRadius: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { stepSize: 1, color: '#2C2C2C' },
+        grid: { color: '#D4CFC3' }
+      },
+      x: {
+        ticks: { color: '#2C2C2C' },
+        grid: { display: false }
+      }
+    }
+  }
+});
+</script>
+{% endblock %}

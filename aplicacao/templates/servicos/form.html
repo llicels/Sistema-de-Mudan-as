@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }} — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <a href="{{ url_for('listar_servicos') }}">Serviços</a>
+  <span class="sep">/</span>
+  <span class="current">{{ titulo }}</span>
+</div>
+<div class="page-header">
+  <h1>{{ titulo }}</h1>
+</div>
+
+<div class="card">
+  <form method="POST" action="{{ action }}">
+    <div class="form-group">
+      <label for="nome">Nome do Serviço</label>
+      <input type="text" id="nome" name="nome" class="form-control" value="{{ servico.nome if servico else '' }}" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn">Salvar</button>
+      <a href="{{ url_for('listar_servicos') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

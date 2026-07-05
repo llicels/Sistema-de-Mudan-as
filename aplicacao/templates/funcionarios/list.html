@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Funcionários — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <span class="current">Funcionários</span>
+</div>
+<div class="page-header">
+  <h1>Funcionários</h1>
+  <div class="page-actions">
+    <a href="{{ url_for('criar_funcionario') }}" class="btn">+ Novo Funcionário</a>
+  </div>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar funcionários..." onkeyup="filterTable(this)">
+</div>
+
+{% if funcionarios %}
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>RG</th>
+        <th>Tipo</th>
+        <th>Salário</th>
+        <th>Empresas</th>
+        <th class="actions-cell">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in funcionarios %}
+      <tr>
+        <td>{{ f.nome_completo }}</td>
+        <td>{{ f.cpf }}</td>
+        <td>{{ f.rg }}</td>
+        <td>{{ f.tipo }}</td>
+        <td>R$ {{ "%.2f" | format(f.salario) }}</td>
+        <td>{{ f.empresas | join(', ') }}</td>
+        <td class="actions-cell">
+          <a href="{{ url_for('editar_funcionario', cpf=f.cpf.replace('.','').replace('-','')) }}" class="btn btn-sm">Editar</a>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_funcionario', cpf=f.cpf.replace(".","").replace("-","")) }}', 'Excluir funcionário {{ f.nome_completo }}?')">Excluir</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <p>Nenhum funcionário cadastrado.</p>
+  <div class="empty-cta">
+    <a href="{{ url_for('criar_funcionario') }}" class="btn btn-sm">+ Criar primeiro funcionário</a>
+  </div>
+</div>
+{% endif %}
+{% block scripts %}
+<script>
+function filterTable(input) {
+  var filter = input.value.toLowerCase();
+  var rows = document.querySelectorAll('.table tbody tr');
+  rows.forEach(function(row) {
+    var text = row.textContent.toLowerCase();
+    row.style.display = text.includes(filter) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}
+{% endblock %}

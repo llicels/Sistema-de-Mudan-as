@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Pedidos — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <span class="current">Pedidos</span>
+</div>
+<div class="page-header">
+  <h1>Pedidos</h1>
+  <div class="page-actions">
+    <a href="{{ url_for('criar_pedido') }}" class="btn">+ Novo Pedido</a>
+  </div>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar pedidos..." onkeyup="filterTable(this)">
+</div>
+
+{% if pedidos %}
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Cliente</th>
+        <th>Empresa</th>
+        <th>Data Solicitação</th>
+        <th>Status</th>
+        <th>Valor Total</th>
+        <th class="actions-cell">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in pedidos %}
+      <tr>
+        <td>{{ p.codigo }}</td>
+        <td>{{ p.cliente }}</td>
+        <td>{{ p.empresa }}</td>
+        <td>{{ p.data_solicitacao }}</td>
+        <td><span class="badge badge-info">{{ p.status }}</span></td>
+        <td>R$ {{ "%.2f" | format(p.preco_total) }}</td>
+        <td class="actions-cell">
+          <a href="{{ url_for('detalhes_pedido', codigo=p.codigo) }}" class="btn btn-sm btn-outline">Ver</a>
+          <a href="{{ url_for('editar_pedido', codigo=p.codigo) }}" class="btn btn-sm">Editar</a>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_pedido', codigo=p.codigo) }}', 'Excluir pedido #{{ p.codigo }}?')">Excluir</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <p>Nenhum pedido cadastrado.</p>
+  <div class="empty-cta">
+    <a href="{{ url_for('criar_pedido') }}" class="btn btn-sm">+ Criar primeiro pedido</a>
+  </div>
+</div>
+{% endif %}
+{% block scripts %}
+<script>
+function filterTable(input) {
+  var filter = input.value.toLowerCase();
+  var rows = document.querySelectorAll('.table tbody tr');
+  rows.forEach(function(row) {
+    var text = row.textContent.toLowerCase();
+    row.style.display = text.includes(filter) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}
+{% endblock %}

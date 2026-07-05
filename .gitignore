@@ -1,0 +1,26 @@
+# Opencode
+.opencode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Original assignment files (not part of the project source)
+*.doc
+*.pdf

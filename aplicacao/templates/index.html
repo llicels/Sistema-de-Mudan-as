@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+
+<div class="breadcrumb">
+  Dashboard
+</div>
+
+<div class="page-header">
+  <h1>Dashboard</h1>
+</div>
+
+<!-- Stats grid -->
+<div class="stats-grid">
+  <a href="{{ url_for('listar_empresas') }}" class="dashboard-card" style="display:block;text-decoration:none;color:inherit;">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">🏢</div>
+    <div class="stat-number">{{ count_empresas }}</div>
+    <div class="stat-label">Empresas</div>
+  </a>
+  <a href="{{ url_for('listar_clientes') }}" class="dashboard-card" style="display:block;text-decoration:none;color:inherit;">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">👤</div>
+    <div class="stat-number">{{ count_clientes }}</div>
+    <div class="stat-label">Clientes</div>
+  </a>
+  <a href="{{ url_for('listar_cidades') }}" class="dashboard-card" style="display:block;text-decoration:none;color:inherit;">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">📍</div>
+    <div class="stat-number">{{ count_cidades }}</div>
+    <div class="stat-label">Cidades</div>
+  </a>
+  <a href="{{ url_for('listar_servicos') }}" class="dashboard-card" style="display:block;text-decoration:none;color:inherit;">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔧</div>
+    <div class="stat-number">{{ count_servicos }}</div>
+    <div class="stat-label">Serviços</div>
+  </a>
+  <a href="{{ url_for('listar_pedidos') }}" class="dashboard-card" style="display:block;text-decoration:none;color:inherit;">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">📦</div>
+    <div class="stat-number">{{ count_pedidos }}</div>
+    <div class="stat-label">Pedidos</div>
+  </a>
+  <a href="{{ url_for('listar_funcionarios') }}" class="dashboard-card" style="display:block;text-decoration:none;color:inherit;">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem;">👷</div>
+    <div class="stat-number">{{ count_funcionarios }}</div>
+    <div class="stat-label">Funcionários</div>
+  </a>
+</div>
+
+<!-- Quick actions -->
+<div class="quick-actions">
+  <a href="{{ url_for('criar_pedido') }}" class="card" style="display:flex;align-items:center;gap:0.75rem;padding:1.25rem;text-decoration:none;color:inherit;font-weight:600;font-size:1.1rem;border:2px solid transparent;transition:border-color 0.2s;">
+    <span style="font-size:2rem;">📦</span> Novo Pedido
+  </a>
+  <a href="{{ url_for('relatorios') }}" class="card" style="display:flex;align-items:center;gap:0.75rem;padding:1.25rem;text-decoration:none;color:inherit;font-weight:600;font-size:1.1rem;border:2px solid transparent;transition:border-color 0.2s;">
+    <span style="font-size:2rem;">📊</span> Ver Relatórios
+  </a>
+</div>
+
+<!-- Recent orders -->
+<div class="card">
+  <div class="card-title">Últimos Pedidos</div>
+{% if pedidos_recentes %}
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Cliente</th>
+          <th>Empresa</th>
+          <th>Data Solicitação</th>
+          <th>Status</th>
+          <th>Preço Total</th>
+        </tr>
+      </thead>
+      <tbody>
+{% for pedido in pedidos_recentes %}
+        <tr>
+          <td><a href="{{ url_for('detalhes_pedido', codigo=pedido.codigo) }}">#{{ pedido.codigo }}</a></td>
+          <td>{{ pedido.cliente }}</td>
+          <td>{{ pedido.empresa }}</td>
+          <td>{{ pedido.data_solicitacao }}</td>
+          <td>
+{% set badge_class = 'badge-info' %}
+{% if pedido.status == 'Concluído' %}
+  {% set badge_class = 'badge-success' %}
+{% elif pedido.status == 'Em Andamento' %}
+  {% set badge_class = 'badge-warning' %}
+{% elif pedido.status == 'Cancelado' %}
+  {% set badge_class = 'badge-danger' %}
+{% endif %}
+            <span class="badge {{ badge_class }}">{{ pedido.status }}</span>
+          </td>
+          <td>R$ {{ "%.2f" | format(pedido.preco_total) }}</td>
+        </tr>
+{% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="empty-state">Nenhum pedido registrado.</div>
+{% endif %}
+</div>
+
+<!-- Welcome card -->
+<div class="card">
+  <div class="card-title">Mudanças até o Fim do Mundo</div>
+  <p>
+    Bem-vindo ao sistema que gerencia mudanças nos confins das Backrooms.
+    Monitore empresas, clientes, cidades, serviços, pedidos e funcionários
+    em um único painel. Utilize os relatórios para visualizar histogramas
+    e rankings do top 5 em receita e serviços.
+  </p>
+</div>
+
+{% endblock %}

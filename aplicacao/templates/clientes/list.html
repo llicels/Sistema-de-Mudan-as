@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Clientes — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <span class="current">Clientes</span>
+</div>
+<div class="page-header">
+  <h1>Clientes</h1>
+  <div class="page-actions">
+    <a href="{{ url_for('criar_cliente') }}" class="btn">+ Novo Cliente</a>
+  </div>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar clientes..." onkeyup="filterTable(this)">
+</div>
+
+{% if clientes %}
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>RG</th>
+        <th>Endereço</th>
+        <th>Telefones</th>
+        <th class="actions-cell">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in clientes %}
+      <tr>
+        <td>{{ c.codigo }}</td>
+        <td>{{ c.nome_completo }}</td>
+        <td>{{ c.cpf }}</td>
+        <td>{{ c.rg }}</td>
+        <td>{{ c.endereco }}</td>
+        <td>{{ c.telefones | join(', ') }}</td>
+        <td class="actions-cell">
+          <a href="{{ url_for('editar_cliente', codigo=c.codigo) }}" class="btn btn-sm">Editar</a>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_cliente', codigo=c.codigo) }}', 'Excluir cliente {{ c.nome_completo }}?')">Excluir</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <p>Nenhum cliente cadastrado.</p>
+  <div class="empty-cta">
+    <a href="{{ url_for('criar_cliente') }}" class="btn btn-sm">+ Criar primeiro cliente</a>
+  </div>
+</div>
+{% endif %}
+{% block scripts %}
+<script>
+function filterTable(input) {
+  var filter = input.value.toLowerCase();
+  var rows = document.querySelectorAll('.table tbody tr');
+  rows.forEach(function(row) {
+    var text = row.textContent.toLowerCase();
+    row.style.display = text.includes(filter) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Top 5 Cidades — Serviços — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Top 5 Cidades — Maior Número de Serviços</h1>
+  <div class="page-actions">
+    <a href="{{ url_for('relatorios') }}" class="btn btn-secondary">Voltar</a>
+  </div>
+</div>
+
+<div class="card">
+  {% if dados %}
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Cidade</th>
+          <th>Estado</th>
+          <th>Quantidade</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in dados %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ item.cidade }}</td>
+          <td>{{ item.estado }}</td>
+          <td>{{ item.quantidade }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">Nenhum dado disponível.</div>
+  {% endif %}
+</div>
+{% endblock %}

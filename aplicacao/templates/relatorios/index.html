@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Relatórios — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Relatórios</h1>
+</div>
+
+<div class="stats-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));">
+  <a href="{{ url_for('rel_histograma_servicos') }}" class="dashboard-card" style="display:block;text-align:left;">
+    <div style="font-size:28px;margin-bottom:6px;">📊</div>
+    <div class="card-title" style="margin-bottom:4px;">Serviços por Cidade</div>
+    <p style="font-size:12px;color:var(--concrete);">Histograma com a quantidade de serviços solicitados em cada cidade.</p>
+  </a>
+  <a href="{{ url_for('rel_histograma_pagamentos') }}" class="dashboard-card" style="display:block;text-align:left;">
+    <div style="font-size:28px;margin-bottom:6px;">💰</div>
+    <div class="card-title" style="margin-bottom:4px;">Pagamentos por Cidade</div>
+    <p style="font-size:12px;color:var(--concrete);">Histograma com o valor total pago em serviços por cidade.</p>
+  </a>
+  <a href="{{ url_for('rel_top5_cidades_valor') }}" class="dashboard-card" style="display:block;text-align:left;">
+    <div style="font-size:28px;margin-bottom:6px;">🏆</div>
+    <div class="card-title" style="margin-bottom:4px;">Top 5 Cidades (Valor)</div>
+    <p style="font-size:12px;color:var(--concrete);">Cidades com maior valor investido em serviços.</p>
+  </a>
+  <a href="{{ url_for('rel_top5_cidades_servicos') }}" class="dashboard-card" style="display:block;text-align:left;">
+    <div style="font-size:28px;margin-bottom:6px;">🏆</div>
+    <div class="card-title" style="margin-bottom:4px;">Top 5 Cidades (Serviços)</div>
+    <p style="font-size:12px;color:var(--concrete);">Cidades com maior número de serviços solicitados.</p>
+  </a>
+  <a href="{{ url_for('rel_top5_empresas_servicos') }}" class="dashboard-card" style="display:block;text-align:left;">
+    <div style="font-size:28px;margin-bottom:6px;">🏆</div>
+    <div class="card-title" style="margin-bottom:4px;">Top 5 Empresas (Serviços)</div>
+    <p style="font-size:12px;color:var(--concrete);">Empresas com maior número de serviços solicitados.</p>
+  </a>
+  <a href="{{ url_for('rel_top5_empresas_receita') }}" class="dashboard-card" style="display:block;text-align:left;">
+    <div style="font-size:28px;margin-bottom:6px;">🏆</div>
+    <div class="card-title" style="margin-bottom:4px;">Top 5 Empresas (Receita)</div>
+    <p style="font-size:12px;color:var(--concrete);">Empresas com maiores valores ganhos.</p>
+  </a>
+</div>
+{% endblock %}

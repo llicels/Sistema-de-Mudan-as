@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Mudanças até o Fim do Mundo{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Fluorescent bar -->
+  <div class="header-bar"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo-area">
+      <span class="logo-icon">🌐</span>
+      <div class="logo-text">Mudanças até o Fim do Mundo</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard') }}" class="nav-item nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"><span>📊 Dashboard</span></a>
+
+      <button class="nav-group-toggle">Cadastros</button>
+      <div class="nav-group-content">
+        <a href="{{ url_for('listar_empresas') }}" class="nav-item nav-link {% if request.endpoint and ('empresa' in request.endpoint) %}active{% endif %}"><span>🏢 Empresas</span></a>
+        <a href="{{ url_for('listar_clientes') }}" class="nav-item nav-link {% if request.endpoint and ('cliente' in request.endpoint) %}active{% endif %}"><span>👤 Clientes</span></a>
+        <a href="{{ url_for('listar_cidades') }}" class="nav-item nav-link {% if request.endpoint and ('cidade' in request.endpoint) %}active{% endif %}"><span>📍 Cidades</span></a>
+        <a href="{{ url_for('listar_servicos') }}" class="nav-item nav-link {% if request.endpoint and ('servico' in request.endpoint) %}active{% endif %}"><span>🔧 Serviços</span></a>
+        <a href="{{ url_for('listar_pedidos') }}" class="nav-item nav-link {% if request.endpoint and ('pedido' in request.endpoint) %}active{% endif %}"><span>📦 Pedidos</span></a>
+        <a href="{{ url_for('listar_funcionarios') }}" class="nav-item nav-link {% if request.endpoint and ('funcionario' in request.endpoint) %}active{% endif %}"><span>👷 Funcionários</span></a>
+      </div>
+
+      <button class="nav-group-toggle">Relatórios</button>
+      <div class="nav-group-content">
+        <a href="{{ url_for('rel_histograma_servicos') }}" class="nav-item nav-link nav-sub-link {% if request.endpoint and ('rel_histograma_servicos' in request.endpoint) %}active{% endif %}"><span>📊 Serviços por Cidade</span></a>
+        <a href="{{ url_for('rel_histograma_pagamentos') }}" class="nav-item nav-link nav-sub-link {% if request.endpoint and ('rel_histograma_pagamentos' in request.endpoint) %}active{% endif %}"><span>💰 Pagamentos por Cidade</span></a>
+        <a href="{{ url_for('rel_top5_cidades_valor') }}" class="nav-item nav-link nav-sub-link {% if request.endpoint and ('rel_top5_cidades_valor' in request.endpoint) %}active{% endif %}"><span>🏆 Top 5 Cidades (Valor)</span></a>
+        <a href="{{ url_for('rel_top5_cidades_servicos') }}" class="nav-item nav-link nav-sub-link {% if request.endpoint and ('rel_top5_cidades_servicos' in request.endpoint) %}active{% endif %}"><span>🏆 Top 5 Cidades (Serviços)</span></a>
+        <a href="{{ url_for('rel_top5_empresas_servicos') }}" class="nav-item nav-link nav-sub-link {% if request.endpoint and ('rel_top5_empresas_servicos' in request.endpoint) %}active{% endif %}"><span>🏆 Top 5 Empresas (Serviços)</span></a>
+        <a href="{{ url_for('rel_top5_empresas_receita') }}" class="nav-item nav-link nav-sub-link {% if request.endpoint and ('rel_top5_empresas_receita' in request.endpoint) %}active{% endif %}"><span>🏆 Top 5 Empresas (Receita)</span></a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+          <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <!-- Confirm modal -->
+    <div id="confirm-modal" class="modal-overlay" style="display:none;">
+      <div class="modal">
+        <div class="modal-icon">⚠️</div>
+        <p id="confirm-message" class="modal-message">Tem certeza?</p>
+        <div class="modal-actions">
+          <form id="confirm-form" method="POST" action="">
+            <button type="submit" class="btn btn-danger" id="confirm-yes">Sim, excluir</button>
+          </form>
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {% block scripts %}
+  <script>
+  function confirmDelete(actionUrl, message) {
+    document.getElementById('confirm-message').textContent = message;
+    document.getElementById('confirm-form').action = actionUrl;
+    document.getElementById('confirm-modal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('confirm-modal').style.display = 'none';
+  }
+
+  document.getElementById('confirm-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // Flash auto-dismiss
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.alert').forEach(function(el) {
+      setTimeout(function() {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-10px)';
+        setTimeout(function() { el.remove(); }, 300);
+      }, 3000);
+    });
+  });
+
+  // Nav group toggle
+  document.querySelectorAll('.nav-group-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      this.classList.toggle('open');
+      var content = this.nextElementSibling;
+      content.classList.toggle('collapsed');
+    });
+  });
+
+  // Sidebar toggle (mobile)
+  document.addEventListener('DOMContentLoaded', function() {
+    var bar = document.querySelector('.header-bar');
+    var toggle = document.createElement('button');
+    toggle.className = 'sidebar-toggle';
+    toggle.innerHTML = '☰';
+    toggle.onclick = function() {
+      document.querySelector('.sidebar').classList.toggle('show');
+    };
+    bar.parentNode.insertBefore(toggle, bar.nextSibling);
+
+    // Close nav groups on mobile by default
+    if (window.innerWidth < 768) {
+      document.querySelectorAll('.nav-group-content').forEach(function(el) {
+        el.classList.add('collapsed');
+      });
+    }
+  });
+  </script>
+  {% endblock %}
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Pedido #{{ pedido.codigo }} — Mudanças até o Fim do Mundo{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <a href="{{ url_for('listar_pedidos') }}">Pedidos</a>
+  <span class="sep">/</span>
+  <span class="current">Pedido #{{ pedido.codigo }}</span>
+</div>
+<div class="page-header">
+  <h1>Pedido #{{ pedido.codigo }}</h1>
+  <div class="page-actions">
+    <a href="{{ url_for('editar_pedido', codigo=pedido.codigo) }}" class="btn">Editar</a>
+    <a href="{{ url_for('listar_pedidos') }}" class="btn btn-secondary">Voltar</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Informações do Pedido</div>
+  <div class="detail-grid">
+    <div class="detail-item">
+      <div class="detail-label">Cliente</div>
+      <div class="detail-value">{{ pedido.cliente }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Empresa</div>
+      <div class="detail-value">{{ pedido.empresa }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Data de Solicitação</div>
+      <div class="detail-value">{{ pedido.data_solicitacao }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Data de Resolução</div>
+      <div class="detail-value">{{ pedido.data_resolucao or '-' }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Status</div>
+      <div class="detail-value"><span class="badge badge-info">{{ pedido.status }}</span></div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Preço Total</div>
+      <div class="detail-value">R$ {{ "%.2f" | format(pedido.preco_total) }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Serviços Solicitados</div>
+  {% if pedido.servicos %}
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Serviço</th>
+          <th>Partida</th>
+          <th>Destino</th>
+          <th>Cidade</th>
+          <th>Data</th>
+          <th>Tempo (h)</th>
+          <th>Preço</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in pedido.servicos %}
+        <tr>
+          <td>{{ s.servico }}</td>
+          <td>{{ s.endereco_partida }}</td>
+          <td>{{ s.endereco_destino or '-' }}</td>
+          <td>{{ s.cidade_nome }}/{{ s.cidade_estado }}</td>
+          <td>{{ s.data_realizacao }}</td>
+          <td>{{ s.tempo_gasto }}</td>
+          <td>R$ {{ "%.2f" | format(s.preco) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">Nenhum serviço associado a este pedido.</div>
+  {% endif %}
+</div>
+{% endblock %}
