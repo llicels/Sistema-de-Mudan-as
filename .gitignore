@@ -7,6 +7,14 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+*.egg
+*.whl
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.log
 
 # Environment
 .env
@@ -16,11 +24,17 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
 
 # IDE
 .vscode/
 .idea/
+*.iml
 
 # Original assignment files (not part of the project source)
 *.doc
 *.pdf
+
+.gitignore
