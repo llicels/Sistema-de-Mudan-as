@@ -73,22 +73,20 @@
       <tbody>
 {% for pedido in pedidos_recentes %}
         <tr>
-          <td><a href="{{ url_for('detalhes_pedido', codigo=pedido.codigo) }}">#{{ pedido.codigo }}</a></td>
-          <td>{{ pedido.cliente }}</td>
-          <td>{{ pedido.empresa }}</td>
+          <td><a href="{{ url_for('detalhes_pedido', cod_pedido=pedido.cod_pedido) }}">#{{ pedido.cod_pedido }}</a></td>
+          <td>{{ pedido.cliente_nome }}</td>
+          <td>{{ pedido.empresa_nome }}</td>
           <td>{{ pedido.data_solicitacao }}</td>
           <td>
-{% set badge_class = 'badge-info' %}
-{% if pedido.status == 'Concluído' %}
-  {% set badge_class = 'badge-success' %}
-{% elif pedido.status == 'Em Andamento' %}
-  {% set badge_class = 'badge-warning' %}
-{% elif pedido.status == 'Cancelado' %}
-  {% set badge_class = 'badge-danger' %}
+{% if pedido.aceite == true %}
+            <span class="badge badge-success">Aceito</span>
+{% elif pedido.aceite == false %}
+            <span class="badge badge-danger">Recusado</span>
+{% else %}
+            <span class="badge badge-warning">Pendente</span>
 {% endif %}
-            <span class="badge {{ badge_class }}">{{ pedido.status }}</span>
           </td>
-          <td>R$ {{ "%.2f" | format(pedido.preco_total) }}</td>
+          <td>R$ {{ "%.2f" | format(pedido.preco_total or 0) }}</td>
         </tr>
 {% endfor %}
       </tbody>

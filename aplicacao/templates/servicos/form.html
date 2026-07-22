@@ -16,12 +16,83 @@
   <form method="POST" action="{{ action }}">
     <div class="form-group">
       <label for="nome">Nome do Serviço</label>
-      <input type="text" id="nome" name="nome" class="form-control" value="{{ servico.nome if servico else '' }}" required>
+      <input type="text" id="nome" name="nome" class="form-control" value="{{ servico.nome_servico if servico else '' }}" required>
     </div>
+    <div class="form-group">
+      <label for="tipo">Tipo de Serviço</label>
+      <select id="tipo" name="tipo" class="form-control" required onchange="toggleTipoCampos()">
+        <option value="OUTRO" {% if servico and servico.tipo_servico == 'OUTRO' %}selected{% endif %}>Simples</option>
+        <option value="TRANSPORTE" {% if servico and servico.tipo_servico == 'TRANSPORTE' %}selected{% endif %}>Transporte</option>
+        <option value="GUINDASTE" {% if servico and servico.tipo_servico == 'GUINDASTE' %}selected{% endif %}>Guindaste</option>
+      </select>
+    </div>
+
+    <div id="campos_transporte" style="display:none;">
+      <div class="form-group">
+        <label for="limite_carga">Limite de Carga (kg)</label>
+        <input type="number" step="0.01" id="limite_carga" name="limite_carga" class="form-control"
+               value="{{ servico.limite_carga if servico else '' }}">
+      </div>
+      <div class="form-group">
+        <label>Faixas de Acréscimo</label>
+        <div id="acrescimos-container">
+          {% if servico and servico.acrescimos %}
+            {% for a in servico.acrescimos %}
+            <div class="input-group" style="margin-bottom:6px;">
+              <input type="number" step="0.01" name="acr_limite[]" class="form-control" value="{{ a.limite_carga }}" placeholder="Limite (kg)" style="display:inline-block;width:auto;min-width:120px;">
+              <input type="number" step="0.01" name="acr_percentual[]" class="form-control" value="{{ a.percentual }}" placeholder="%" style="display:inline-block;width:auto;min-width:80px;">
+              <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">Remover</button>
+            </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <button type="button" class="btn btn-sm" onclick="addAcrescimo()">+ Faixa</button>
+      </div>
+    </div>
+
+    <div id="campos_guindaste" style="display:none;">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tamanho_base">Tamanho da Base (m²)</label>
+          <input type="number" step="0.01" id="tamanho_base" name="tamanho_base" class="form-control"
+                 value="{{ servico.tamanho_base if servico else '' }}">
+        </div>
+        <div class="form-group">
+          <label for="altura">Altura (m)</label>
+          <input type="number" step="0.01" id="altura" name="altura" class="form-control"
+                 value="{{ servico.altura if servico else '' }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="bonus_aumento">Bônus de Altura (%)</label>
+        <input type="number" step="0.01" id="bonus_aumento" name="bonus_aumento" class="form-control"
+               value="{{ servico.bonus_aumento if servico else 0 }}">
+      </div>
+    </div>
+
     <div class="form-actions">
       <button type="submit" class="btn">Salvar</button>
       <a href="{{ url_for('listar_servicos') }}" class="btn btn-secondary">Cancelar</a>
     </div>
   </form>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+function toggleTipoCampos() {
+  var tipo = document.getElementById('tipo').value;
+  document.getElementById('campos_transporte').style.display = tipo === 'TRANSPORTE' ? 'block' : 'none';
+  document.getElementById('campos_guindaste').style.display = tipo === 'GUINDASTE' ? 'block' : 'none';
+}
+document.addEventListener('DOMContentLoaded', toggleTipoCampos);
+
+function addAcrescimo() {
+  var container = document.getElementById('acrescimos-container');
+  var div = document.createElement('div');
+  div.className = 'input-group';
+  div.style.marginBottom = '6px';
+  div.innerHTML = '<input type="number" step="0.01" name="acr_limite[]" class="form-control" placeholder="Limite (kg)" style="display:inline-block;width:auto;min-width:120px;"> <input type="number" step="0.01" name="acr_percentual[]" class="form-control" placeholder="%" style="display:inline-block;width:auto;min-width:80px;"> <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">Remover</button>';
+  container.appendChild(div);
+}
+</script>
 {% endblock %}

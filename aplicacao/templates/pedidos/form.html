@@ -16,45 +16,39 @@
   <form method="POST" action="{{ action }}">
     <div class="form-row">
       <div class="form-group">
-        <label for="codigo">Código do Pedido</label>
-        <input type="number" id="codigo" name="codigo" class="form-control" value="{{ pedido.codigo if pedido else '' }}" required>
-      </div>
-      <div class="form-group">
-        <label for="cliente">Cliente</label>
-        <select id="cliente" name="cliente" class="form-control" required>
+        <label for="cod_cliente">Cliente</label>
+        <select id="cod_cliente" name="cod_cliente" class="form-control" required>
           <option value="">Selecione...</option>
           {% for c in clientes %}
-          <option value="{{ c.nome_completo }}" {% if pedido and pedido.cliente == c.nome_completo %}selected{% endif %}>{{ c.nome_completo }}</option>
+          <option value="{{ c.cod_cliente }}" {% if pedido and pedido.cod_cliente == c.cod_cliente %}selected{% endif %}>{{ c.nome_completo }}</option>
           {% endfor %}
         </select>
       </div>
-    </div>
-    <div class="form-row">
       <div class="form-group">
-        <label for="empresa">Empresa</label>
-        <select id="empresa" name="empresa" class="form-control" required>
+        <label for="id_empresa">Empresa</label>
+        <select id="id_empresa" name="id_empresa" class="form-control" required>
           <option value="">Selecione...</option>
           {% for e in empresas %}
-          <option value="{{ e.nome }}" {% if pedido and pedido.empresa == e.nome %}selected{% endif %}>{{ e.nome }}</option>
+          <option value="{{ e.id_empresa }}" {% if pedido and pedido.id_empresa == e.id_empresa %}selected{% endif %}>{{ e.nome }}</option>
           {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="status">Status</label>
-        <select id="status" name="status" class="form-control" required>
-          <option value="Pendente" {% if pedido and pedido.status == 'Pendente' %}selected{% endif %}>Pendente</option>
-          <option value="Aceito" {% if pedido and pedido.status == 'Aceito' %}selected{% endif %}>Aceito</option>
-          <option value="Em Andamento" {% if pedido and pedido.status == 'Em Andamento' %}selected{% endif %}>Em Andamento</option>
-          <option value="Concluído" {% if pedido and pedido.status == 'Concluído' %}selected{% endif %}>Concluído</option>
-          <option value="Cancelado" {% if pedido and pedido.status == 'Cancelado' %}selected{% endif %}>Cancelado</option>
         </select>
       </div>
     </div>
     <div class="form-row">
+      <div class="form-group">
+        <label for="aceite">Status</label>
+        <select id="aceite" name="aceite" class="form-control">
+          <option value="">Pendente</option>
+          <option value="true" {% if pedido and pedido.aceite == true %}selected{% endif %}>Aceito</option>
+          <option value="false" {% if pedido and pedido.aceite == false %}selected{% endif %}>Recusado</option>
+        </select>
+      </div>
       <div class="form-group">
         <label for="data_solicitacao">Data de Solicitação</label>
         <input type="date" id="data_solicitacao" name="data_solicitacao" class="form-control" value="{{ pedido.data_solicitacao if pedido else '' }}" required>
       </div>
+    </div>
+    <div class="form-row">
       <div class="form-group">
         <label for="data_resolucao">Data de Resolução</label>
         <input type="date" id="data_resolucao" name="data_resolucao" class="form-control" value="{{ pedido.data_resolucao if pedido else '' }}">
@@ -62,15 +56,49 @@
     </div>
 
     <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Serviços do Pedido</label>
-      <button type="button" class="btn btn-sm" id="add-servico-btn">+ Adicionar Serviço</button>
+    <h4 style="margin-bottom:12px;">Endereços da Mudança</h4>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cidade_partida">Cidade de Partida</label>
+        <select id="cidade_partida" name="cidade_partida" class="form-control" required>
+          <option value="">Selecione...</option>
+          {% for cid in cidades_lista %}
+          <option value="{{ cid.nome_cidade }}" {% if pedido and pedido.cidade_partida == cid.nome_cidade %}selected{% endif %}>{{ cid.nome_cidade }}/{{ cid.estado }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="endereco_partida">Endereço de Partida</label>
+        <input type="text" id="endereco_partida" name="endereco_partida" class="form-control" value="{{ pedido.endereco_partida if pedido else '' }}" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cidade_destino">Cidade de Destino</label>
+        <select id="cidade_destino" name="cidade_destino" class="form-control" required>
+          <option value="">Selecione...</option>
+          {% for cid in cidades_lista %}
+          <option value="{{ cid.nome_cidade }}" {% if pedido and pedido.cidade_destino == cid.nome_cidade %}selected{% endif %}>{{ cid.nome_cidade }}/{{ cid.estado }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="endereco_destino">Endereço de Destino</label>
+        <input type="text" id="endereco_destino" name="endereco_destino" class="form-control" value="{{ pedido.endereco_destino if pedido else '' }}" required>
+      </div>
     </div>
 
+    <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Serviços Solicitados</label>
+      <button type="button" class="btn btn-sm" id="add-servico-btn">+ Adicionar Serviço</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">O preço de cada serviço é calculado automaticamente pelo sistema.</p>
+
     <div id="servicos-container">
-      {% if pedido and pedido.servicos %}
-        {% for s in pedido.servicos %}
+      {% if servicos_atual %}
+        {% for s in servicos_atual %}
         <div class="servico-entry">
           <button type="button" class="btn btn-sm btn-danger remove-servico" onclick="this.parentElement.remove()">Remover</button>
           <div class="form-row">
@@ -79,43 +107,19 @@
               <select name="servico_nome[]" class="form-control" required>
                 <option value="">Selecione...</option>
                 {% for sv in servicos_disponiveis %}
-                <option value="{{ sv.nome }}" {% if s.servico == sv.nome %}selected{% endif %}>{{ sv.nome }}</option>
+                <option value="{{ sv.nome_servico }}" {% if s.nome_servico == sv.nome_servico %}selected{% endif %}>{{ sv.nome_servico }}</option>
                 {% endfor %}
               </select>
             </div>
             <div class="form-group">
-              <label>Preço</label>
-              <input type="number" step="0.01" name="servico_preco[]" class="form-control" value="{{ s.preco }}" required>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Endereço de Partida</label>
-              <input type="text" name="servico_partida[]" class="form-control" value="{{ s.endereco_partida }}" required>
-            </div>
-            <div class="form-group">
-              <label>Endereço de Destino</label>
-              <input type="text" name="servico_destino[]" class="form-control" value="{{ s.endereco_destino }}">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Cidade</label>
-              <select name="servico_cidade[]" class="form-control" required>
-                <option value="">Selecione...</option>
-                {% for cid in cidades_lista %}
-                <option value="{{ cid.nome }}|{{ cid.estado }}" {% if s.cidade_nome == cid.nome and s.cidade_estado == cid.estado %}selected{% endif %}>{{ cid.nome }}/{{ cid.estado }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Data de Realização</label>
-              <input type="date" name="servico_data[]" class="form-control" value="{{ s.data_realizacao }}" required>
+              <label>Previsão (horas)</label>
+              <input type="number" step="0.5" name="servico_tempo[]" class="form-control"
+                     value="{{ s.tempo_duracao_horas }}" required>
             </div>
           </div>
           <div class="form-group">
-            <label>Tempo Gasto (horas)</label>
-            <input type="number" step="0.5" name="servico_tempo[]" class="form-control" value="{{ s.tempo_gasto }}" required>
+            <label>Data de Realização</label>
+            <input type="date" name="servico_data[]" class="form-control" value="{{ s.data_efetiva if s.data_efetiva else '' }}">
           </div>
         </div>
         {% endfor %}
@@ -143,43 +147,18 @@ document.getElementById('add-servico-btn').addEventListener('click', function() 
         <select name="servico_nome[]" class="form-control" required>
           <option value="">Selecione...</option>
           {% for sv in servicos_disponiveis %}
-          <option value="{{ sv.nome }}">{{ sv.nome }}</option>
+          <option value="{{ sv.nome_servico }}">{{ sv.nome_servico }}</option>
           {% endfor %}
         </select>
       </div>
       <div class="form-group">
-        <label>Preço</label>
-        <input type="number" step="0.01" name="servico_preco[]" class="form-control" required>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Endereço de Partida</label>
-        <input type="text" name="servico_partida[]" class="form-control" required>
-      </div>
-      <div class="form-group">
-        <label>Endereço de Destino</label>
-        <input type="text" name="servico_destino[]" class="form-control">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Cidade</label>
-        <select name="servico_cidade[]" class="form-control" required>
-          <option value="">Selecione...</option>
-          {% for cid in cidades_lista %}
-          <option value="{{ cid.nome }}|{{ cid.estado }}">{{ cid.nome }}/{{ cid.estado }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Data de Realização</label>
-        <input type="date" name="servico_data[]" class="form-control" required>
+        <label>Previsão (horas)</label>
+        <input type="number" step="0.5" name="servico_tempo[]" class="form-control" required>
       </div>
     </div>
     <div class="form-group">
-      <label>Tempo Gasto (horas)</label>
-      <input type="number" step="0.5" name="servico_tempo[]" class="form-control" required>
+      <label>Data de Realização</label>
+      <input type="date" name="servico_data[]" class="form-control">
     </div>
   `;
   container.appendChild(entry);

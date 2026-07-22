@@ -23,16 +23,31 @@
     <thead>
       <tr>
         <th>Nome</th>
+        <th>Tipo</th>
+        <th>Detalhes</th>
         <th class="actions-cell">Ações</th>
       </tr>
     </thead>
     <tbody>
       {% for s in servicos %}
       <tr>
-        <td>{{ s.nome }}</td>
+        <td>{{ s.nome_servico }}</td>
+        <td><span class="badge badge-info">{{ s.tipo_servico }}</span></td>
+        <td>
+          {% if s.tipo_servico == 'GUINDASTE' %}
+            Base: {{ s.tamanho_base }}m² | Altura: {{ s.altura }}m | Bônus: {{ s.bonus_aumento }}%
+          {% elif s.tipo_servico == 'TRANSPORTE' %}
+            Carga máx: {{ s.limite_carga }}kg
+            {% for a in s.acrescimos %}
+              <br><small>+{{ a.limite_carga }}kg: {{ a.percentual }}%</small>
+            {% endfor %}
+          {% else %}
+            <span class="badge badge-secondary">Simples</span>
+          {% endif %}
+        </td>
         <td class="actions-cell">
-          <a href="{{ url_for('editar_servico', nome=s.nome) }}" class="btn btn-sm">Editar</a>
-          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_servico', nome=s.nome) }}', 'Excluir serviço {{ s.nome }}?')">Excluir</button>
+          <a href="{{ url_for('editar_servico', nome=s.nome_servico) }}" class="btn btn-sm">Editar</a>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_servico', nome=s.nome_servico) }}', 'Excluir serviço {{ s.nome_servico }}?')">Excluir</button>
         </td>
       </tr>
       {% endfor %}

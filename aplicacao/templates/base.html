@@ -28,6 +28,7 @@
         <a href="{{ url_for('listar_clientes') }}" class="nav-item nav-link {% if request.endpoint and ('cliente' in request.endpoint) %}active{% endif %}"><span>👤 Clientes</span></a>
         <a href="{{ url_for('listar_cidades') }}" class="nav-item nav-link {% if request.endpoint and ('cidade' in request.endpoint) %}active{% endif %}"><span>📍 Cidades</span></a>
         <a href="{{ url_for('listar_servicos') }}" class="nav-item nav-link {% if request.endpoint and ('servico' in request.endpoint) %}active{% endif %}"><span>🔧 Serviços</span></a>
+        <a href="{{ url_for('listar_oferecem') }}" class="nav-item nav-link {% if request.endpoint and ('oferecem' in request.endpoint) %}active{% endif %}"><span>💰 Oferecimentos</span></a>
         <a href="{{ url_for('listar_pedidos') }}" class="nav-item nav-link {% if request.endpoint and ('pedido' in request.endpoint) %}active{% endif %}"><span>📦 Pedidos</span></a>
         <a href="{{ url_for('listar_funcionarios') }}" class="nav-item nav-link {% if request.endpoint and ('funcionario' in request.endpoint) %}active{% endif %}"><span>👷 Funcionários</span></a>
       </div>

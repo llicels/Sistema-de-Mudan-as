@@ -34,15 +34,19 @@
     <tbody>
       {% for c in clientes %}
       <tr>
-        <td>{{ c.codigo }}</td>
+        <td>{{ c.cod_cliente }}</td>
         <td>{{ c.nome_completo }}</td>
         <td>{{ c.cpf }}</td>
         <td>{{ c.rg }}</td>
         <td>{{ c.endereco }}</td>
-        <td>{{ c.telefones | join(', ') }}</td>
+        <td>
+          {% for t in c.telefones %}
+            <span class="badge badge-info">{{ t.telefone }}</span>
+          {% endfor %}
+        </td>
         <td class="actions-cell">
-          <a href="{{ url_for('editar_cliente', codigo=c.codigo) }}" class="btn btn-sm">Editar</a>
-          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_cliente', codigo=c.codigo) }}', 'Excluir cliente {{ c.nome_completo }}?')">Excluir</button>
+          <a href="{{ url_for('editar_cliente', cod_cliente=c.cod_cliente) }}" class="btn btn-sm">Editar</a>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_cliente', cod_cliente=c.cod_cliente) }}', 'Excluir cliente {{ c.nome_completo }}?')">Excluir</button>
         </td>
       </tr>
       {% endfor %}

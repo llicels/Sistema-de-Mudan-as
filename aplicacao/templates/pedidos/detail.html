@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Pedido #{{ pedido.codigo }} — Mudanças até o Fim do Mundo{% endblock %}
+{% block title %}Pedido #{{ pedido.cod_pedido }} — Mudanças até o Fim do Mundo{% endblock %}
 {% block content %}
 <div class="breadcrumb">
   <a href="{{ url_for('dashboard') }}">Dashboard</a>
   <span class="sep">/</span>
   <a href="{{ url_for('listar_pedidos') }}">Pedidos</a>
   <span class="sep">/</span>
-  <span class="current">Pedido #{{ pedido.codigo }}</span>
+  <span class="current">Pedido #{{ pedido.cod_pedido }}</span>
 </div>
 <div class="page-header">
-  <h1>Pedido #{{ pedido.codigo }}</h1>
+  <h1>Pedido #{{ pedido.cod_pedido }}</h1>
   <div class="page-actions">
-    <a href="{{ url_for('editar_pedido', codigo=pedido.codigo) }}" class="btn">Editar</a>
+    <a href="{{ url_for('editar_pedido', cod_pedido=pedido.cod_pedido) }}" class="btn">Editar</a>
     <a href="{{ url_for('listar_pedidos') }}" class="btn btn-secondary">Voltar</a>
   </div>
 </div>
@@ -21,11 +21,11 @@
   <div class="detail-grid">
     <div class="detail-item">
       <div class="detail-label">Cliente</div>
-      <div class="detail-value">{{ pedido.cliente }}</div>
+      <div class="detail-value">{{ pedido.cliente_nome }}</div>
     </div>
     <div class="detail-item">
       <div class="detail-label">Empresa</div>
-      <div class="detail-value">{{ pedido.empresa }}</div>
+      <div class="detail-value">{{ pedido.empresa_nome }}</div>
     </div>
     <div class="detail-item">
       <div class="detail-label">Data de Solicitação</div>
@@ -37,41 +37,79 @@
     </div>
     <div class="detail-item">
       <div class="detail-label">Status</div>
-      <div class="detail-value"><span class="badge badge-info">{{ pedido.status }}</span></div>
+      <div class="detail-value">
+        {% if pedido.aceite == true %}
+          <span class="badge badge-success">Aceito</span>
+        {% elif pedido.aceite == false %}
+          <span class="badge badge-danger">Recusado</span>
+        {% else %}
+          <span class="badge badge-warning">Pendente</span>
+        {% endif %}
+      </div>
     </div>
     <div class="detail-item">
       <div class="detail-label">Preço Total</div>
-      <div class="detail-value">R$ {{ "%.2f" | format(pedido.preco_total) }}</div>
+      <div class="detail-value">R$ {{ "%.2f" | format(pedido.preco_total or 0) }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Partida</div>
+      <div class="detail-value">{{ pedido.cidade_partida }} — {{ pedido.endereco_partida }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">Destino</div>
+      <div class="detail-value">{{ pedido.cidade_destino }} — {{ pedido.endereco_destino }}</div>
     </div>
   </div>
 </div>
 
 <div class="card">
   <div class="card-title">Serviços Solicitados</div>
-  {% if pedido.servicos %}
+  {% if servicos %}
   <div class="table-container">
     <table class="table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Serviço</th>
-          <th>Partida</th>
-          <th>Destino</th>
-          <th>Cidade</th>
+          <th>Duração</th>
           <th>Data</th>
-          <th>Tempo (h)</th>
           <th>Preço</th>
+          <th>Funcionários</th>
+          <th class="actions-cell">Alocar</th>
         </tr>
       </thead>
       <tbody>
-        {% for s in pedido.servicos %}
+        {% for s in servicos %}
         <tr>
-          <td>{{ s.servico }}</td>
-          <td>{{ s.endereco_partida }}</td>
-          <td>{{ s.endereco_destino or '-' }}</td>
-          <td>{{ s.cidade_nome }}/{{ s.cidade_estado }}</td>
-          <td>{{ s.data_realizacao }}</td>
-          <td>{{ s.tempo_gasto }}</td>
-          <td>R$ {{ "%.2f" | format(s.preco) }}</td>
+          <td>{{ s.id_solicitacao }}</td>
+          <td>{{ s.nome_servico }}</td>
+          <td>{{ s.tempo_duracao or '-' }}</td>
+          <td>{{ s.data_efetiva or '-' }}</td>
+          <td>R$ {{ "%.2f" | format(s.preco or 0) }}</td>
+          <td>
+            {% if funcs_por_solicitacao[s.id_solicitacao] %}
+              {% for f in funcs_por_solicitacao[s.id_solicitacao] %}
+                <span class="badge badge-info">{{ f.nome_completo_func }} ({{ f.tipo_func }})</span>
+                <form method="POST" action="{{ url_for('desalocar_funcionario', id_solicitacao=s.id_solicitacao, cpf=f.cpf_func) }}" style="display:inline;">
+                  <button type="submit" class="btn btn-sm btn-danger" title="Remover">x</button>
+                </form>
+                <br>
+              {% endfor %}
+            {% else %}
+              <span class="badge badge-secondary">Nenhum</span>
+            {% endif %}
+          </td>
+          <td class="actions-cell">
+            <form method="POST" action="{{ url_for('alocar_funcionario', id_solicitacao=s.id_solicitacao) }}" style="display:flex;gap:4px;">
+              <select name="cpf_func" class="form-control" style="width:auto;min-width:120px;">
+                <option value="">Selecione...</option>
+                {% for f in todos_funcionarios %}
+                <option value="{{ f.cpf_func }}">{{ f.nome_completo_func }} ({{ f.tipo_func }})</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-sm">+</button>
+            </form>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

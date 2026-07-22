@@ -30,11 +30,11 @@
     <tbody>
       {% for c in cidades %}
       <tr>
-        <td>{{ c.nome }}</td>
+        <td>{{ c.nome_cidade }}</td>
         <td>{{ c.estado }}</td>
         <td class="actions-cell">
-          <a href="{{ url_for('editar_cidade', nome=c.nome, estado=c.estado) }}" class="btn btn-sm">Editar</a>
-          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_cidade', nome=c.nome, estado=c.estado) }}', 'Excluir cidade {{ c.nome }}/{{ c.estado }}?')">Excluir</button>
+          <a href="{{ url_for('editar_cidade', nome=c.nome_cidade, estado=c.estado) }}" class="btn btn-sm">Editar</a>
+          <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('excluir_cidade', nome=c.nome_cidade, estado=c.estado) }}', 'Excluir cidade {{ c.nome_cidade }}/{{ c.estado }}?')">Excluir</button>
         </td>
       </tr>
       {% endfor %}
