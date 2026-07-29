@@ -127,7 +127,3 @@ As credenciais do PostgreSQL são lidas de `config.py`, que usa as variáveis de
 ├── .gitignore
 └── README.md
 ```
-
-## Diagrama ER
-
-O diagrama entidade-relacionamento do projeto está disponível em `SolucaoMudancasEP1EP22026.pdf`.
