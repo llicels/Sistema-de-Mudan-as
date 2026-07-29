@@ -52,7 +52,7 @@ BEGIN
     WHERE p.cod_pedido = p_cod_pedido;
 
     IF v_preco_hora IS NULL THEN
-        RAISE EXCEPTION 'Serviço % não é oferecido pela empresa na cidade de partida.', p_nome_servico;
+        RETURN NULL;
     END IF;
 
     -- Duração da solicitação

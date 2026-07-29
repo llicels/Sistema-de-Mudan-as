@@ -72,7 +72,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Acessar em `http://localhost:5000`.
+Acessar em `http://localhost:5001`. Se a porta estiver ocupada, defina outra: `FLASK_PORT=5000 python app.py`.
 
 ### Configuração do banco
 

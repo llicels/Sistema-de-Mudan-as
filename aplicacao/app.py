@@ -438,30 +438,39 @@ def listar_pedidos():
 @app.route("/pedidos/criar", methods=["GET", "POST"])
 def criar_pedido():
     if request.method == "POST":
-        aceite_raw = request.form["aceite"]
-        aceite = True if aceite_raw == "true" else (False if aceite_raw == "false" else None)
-        servicos = []
-        for i, nome_servico in enumerate(request.form.getlist("servico_nome[]")):
-            tempo_h = request.form.getlist("servico_tempo[]")[i]
-            servicos.append({
-                "nome_servico": nome_servico,
-                "tempo_duracao": f"{float(tempo_h)} hours" if tempo_h else None,
-                "data_efetiva": request.form.getlist("servico_data[]")[i] or None,
-            })
-        model_pedidos.criar(
-            request.form["data_solicitacao"],
-            request.form.get("data_resolucao", ""),
-            aceite,
-            int(request.form["id_empresa"]),
-            int(request.form["cod_cliente"]),
-            request.form["cidade_partida"].strip(),
-            request.form["endereco_partida"].strip(),
-            request.form["cidade_destino"].strip(),
-            request.form["endereco_destino"].strip(),
-            servicos
-        )
-        flash("Pedido criado!", "success")
-        return redirect(url_for("listar_pedidos"))
+        try:
+            aceite_raw = request.form["aceite"]
+            aceite = True if aceite_raw == "true" else (False if aceite_raw == "false" else None)
+            servicos = []
+            for i, nome_servico in enumerate(request.form.getlist("servico_nome[]")):
+                tempo_h = request.form.getlist("servico_tempo[]")[i]
+                servicos.append({
+                    "nome_servico": nome_servico,
+                    "tempo_duracao": f"{float(tempo_h)} hours" if tempo_h else None,
+                    "data_efetiva": request.form.getlist("servico_data[]")[i] or None,
+                })
+            model_pedidos.criar(
+                request.form["data_solicitacao"],
+                request.form.get("data_resolucao", ""),
+                aceite,
+                int(request.form["id_empresa"]),
+                int(request.form["cod_cliente"]),
+                request.form["cidade_partida"].strip(),
+                request.form["endereco_partida"].strip(),
+                request.form["cidade_destino"].strip(),
+                request.form["endereco_destino"].strip(),
+                servicos
+            )
+            flash("Pedido criado!", "success")
+            return redirect(url_for("listar_pedidos"))
+        except Exception as e:
+            flash(f"Erro ao criar pedido: {e}", "danger")
+            return render_template("pedidos/form.html", titulo="Novo Pedido",
+                                   action=url_for("criar_pedido"), pedido=None,
+                                   clientes=model_clientes.listar_simples(),
+                                   empresas=model_empresas.listar_simples(),
+                                   servicos_disponiveis=model_servicos.listar_simples(),
+                                   cidades_lista=model_cidades.listar_simples())
     return render_template("pedidos/form.html", titulo="Novo Pedido",
                            action=url_for("criar_pedido"), pedido=None,
                            clientes=model_clientes.listar_simples(),
@@ -493,31 +502,41 @@ def editar_pedido(cod_pedido: int):
         flash("Pedido não encontrado.", "danger")
         return redirect(url_for("listar_pedidos"))
     if request.method == "POST":
-        aceite_raw = request.form["aceite"]
-        aceite = True if aceite_raw == "true" else (False if aceite_raw == "false" else None)
-        servicos = []
-        for i, nome_servico in enumerate(request.form.getlist("servico_nome[]")):
-            tempo_h = request.form.getlist("servico_tempo[]")[i]
-            servicos.append({
-                "nome_servico": nome_servico,
-                "tempo_duracao": f"{float(tempo_h)} hours" if tempo_h else None,
-                "data_efetiva": request.form.getlist("servico_data[]")[i] or None,
-            })
-        model_pedidos.atualizar(
-            cod_pedido,
-            request.form["data_solicitacao"],
-            request.form.get("data_resolucao", ""),
-            aceite,
-            int(request.form["id_empresa"]),
-            int(request.form["cod_cliente"]),
-            request.form["cidade_partida"].strip(),
-            request.form["endereco_partida"].strip(),
-            request.form["cidade_destino"].strip(),
-            request.form["endereco_destino"].strip(),
-            servicos
-        )
-        flash(f"Pedido #{cod_pedido} atualizado!", "success")
-        return redirect(url_for("listar_pedidos"))
+        try:
+            aceite_raw = request.form["aceite"]
+            aceite = True if aceite_raw == "true" else (False if aceite_raw == "false" else None)
+            servicos = []
+            for i, nome_servico in enumerate(request.form.getlist("servico_nome[]")):
+                tempo_h = request.form.getlist("servico_tempo[]")[i]
+                servicos.append({
+                    "nome_servico": nome_servico,
+                    "tempo_duracao": f"{float(tempo_h)} hours" if tempo_h else None,
+                    "data_efetiva": request.form.getlist("servico_data[]")[i] or None,
+                })
+            model_pedidos.atualizar(
+                cod_pedido,
+                request.form["data_solicitacao"],
+                request.form.get("data_resolucao", ""),
+                aceite,
+                int(request.form["id_empresa"]),
+                int(request.form["cod_cliente"]),
+                request.form["cidade_partida"].strip(),
+                request.form["endereco_partida"].strip(),
+                request.form["cidade_destino"].strip(),
+                request.form["endereco_destino"].strip(),
+                servicos
+            )
+            flash(f"Pedido #{cod_pedido} atualizado!", "success")
+            return redirect(url_for("listar_pedidos"))
+        except Exception as e:
+            flash(f"Erro ao atualizar pedido: {e}", "danger")
+            return render_template("pedidos/form.html", titulo="Editar Pedido",
+                                   action=url_for("editar_pedido", cod_pedido=cod_pedido),
+                                   pedido=pedido, servicos_atual=servicos_atual,
+                                   clientes=model_clientes.listar_simples(),
+                                   empresas=model_empresas.listar_simples(),
+                                   servicos_disponiveis=model_servicos.listar_simples(),
+                                   cidades_lista=model_cidades.listar_simples())
     servicos_atual = model_pedidos.listar_servicos(cod_pedido)
     for s in servicos_atual:
         if s.get("tempo_duracao") is not None:
@@ -677,4 +696,6 @@ def rel_top5_empresas_receita():
 # ============================================================
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    import os
+    port = int(os.getenv("FLASK_PORT", 5001))
+    app.run(debug=True, host="0.0.0.0", port=port)
